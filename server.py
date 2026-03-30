@@ -129,5 +129,18 @@ def iniciar_servidor():
     carregar()
     app.run(host="0.0.0.0", port=5000)
 
+@app.route("/get_servers/<user>")
+def get_servers(user):
+    lista = []
+
+    for sid, s in servidores.items():
+        if user in s["membros"]:
+            lista.append({
+                "id": sid,
+                "nome": s["nome"]
+            })
+
+    return jsonify(lista)
+    
 if __name__ == "__main__":
     iniciar_servidor()
