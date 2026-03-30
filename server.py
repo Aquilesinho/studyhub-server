@@ -7,6 +7,7 @@ app = Flask(__name__)
 
 usuarios = {}
 servidores = {}
+perfis = {}
 
 # ================= SALVAR =================
 
@@ -52,6 +53,27 @@ def login():
         print(f"[LOGIN] ERRO -> {user}")
         return jsonify({"ok": False})
 
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.json
+    user = data["user"]
+    senha = data["senha"]
+
+    usuarios[user] = senha
+    perfis[user] = {"telefone": ""}
+
+    print(f"[REGISTER] {user}")
+    return jsonify({"ok": True})
+
+@app.route("/set_phone", methods=["POST"])
+def set_phone():
+    data = request.json
+    perfis[data["user"]]["telefone"] = data["telefone"]
+    return jsonify({"ok": True})
+
+@app.route("/get_profile/<user>")
+def get_profile(user):
+    return jsonify(perfis.get(user, {}))
 # ================= SERVIDOR =================
 
 @app.route("/create_server", methods=["POST"])
