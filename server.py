@@ -8,6 +8,7 @@ app = Flask(__name__)
 usuarios = {}
 servidores = {}
 perfis = {}
+online = {}
 
 # ================= SALVAR =================
 
@@ -35,9 +36,13 @@ def register():
     senha = data["senha"]
 
     usuarios[user] = senha
-    salvar()
 
-    print(f"[REGISTER] {user}")
+    perfis[user] = {
+        "telefone": "",
+        "foto": "",
+        "status": "offline"
+    }
+
     return jsonify({"ok": True})
 
 @app.route("/login", methods=["POST"])
@@ -47,11 +52,36 @@ def login():
     senha = data["senha"]
 
     if user in usuarios and usuarios[user] == senha:
-        print(f"[LOGIN] SUCESSO -> {user}")
+        online[user] = True
+        perfis[user]["status"] = "online"
         return jsonify({"ok": True})
-    else:
-        print(f"[LOGIN] ERRO -> {user}")
-        return jsonify({"ok": False})
+    return jsonify({"ok": False})
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    data = request.json
+    user = data["user"]
+
+    online[user] = False
+    perfis[user]["status"] = "offline"
+
+    return jsonify({"ok": True})
+
+@app.route("/set_foto", methods=["POST"])
+def set_foto():
+    data = request.json
+    perfis[data["user"]]["foto"] = data["foto"]
+    return jsonify({"ok": True})
+
+@app.route("/set_status", methods=["POST"])
+def set_status():
+    data = request.json
+    perfis[data["user"]]["status"] = data["status"]
+    return jsonify({"ok": True})
+
+@app.route("/get_profile/<user>")
+def get_profile(user):
+    return jsonify(perfis.get(user, {}))
 
 @app.route("/register", methods=["POST"])
 def register():
