@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import uuid
 import json
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -182,9 +183,17 @@ def save_text():
 @app.route("/send_msg", methods=["POST"])
 def send_msg():
     data = request.json
-    msg = f"[{data['user']}]: {data['msg']}"
+
+    hora = datetime.now().strftime("%H:%M")
+
+    msg = {
+        "user": data["user"],
+        "msg": data["msg"],
+        "hora": hora
+    }
+
     servidores[data["sid"]]["chat"].append(msg)
-    salvar()
+
     return jsonify({"ok": True})
 
 # ================= START =================
