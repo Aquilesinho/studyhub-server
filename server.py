@@ -106,6 +106,18 @@ def get_profile(user):
     return jsonify(perfis.get(user, {}))
 # ================= SERVIDOR =================
 
+@app.route("/delete_server", methods=["POST"])
+def delete_server():
+    data = request.json
+    sid = data["sid"]
+    user = data["user"]
+
+    if sid in servidores and servidores[sid]["dono"] == user:
+        del servidores[sid]
+        return jsonify({"ok": True})
+
+    return jsonify({"ok": False})
+    
 @app.route("/create_server", methods=["POST"])
 def create_server():
     data = request.json
