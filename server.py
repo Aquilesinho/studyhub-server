@@ -11,6 +11,8 @@ servidores = {}
 perfis = {}
 online = {}
 
+@app.route("/delete_server", methods=["GET", "POST"])
+
 # ================= SALVAR =================
 
 def salvar():
